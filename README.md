@@ -1,0 +1,2 @@
+# BTL-AI
+BTL AI Nhóm 12
