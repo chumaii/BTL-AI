@@ -1,7 +1,7 @@
 import os
 import openai
 
-openai.api_key = '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'
+openai.api_key = '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'
 completion = openai.Completion()
 
 start_sequence = "\nBot Đa Di Năng:"
