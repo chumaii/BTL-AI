@@ -111,16 +111,11 @@ def news(update, context):
                                  text="Mình tìm được một số tin tức sốt dẻo cho bạn đây!!!")
         for x in range(0, len(newses)):  
             message = json.loads(newses[x])
-            update.message.reply_text(message['link'] + "\n" + message['description'])
+            update.message.reply_text(message['link'])
         # Deserialize dữ liệu json trả về từ file News.py lúc nãy
     except (IndexError, ValueError):
         update.message.reply_text('Xin lỗi Mình không thể tìm kiếm tin tức cho bạn!!')
 # Hàm news có tác dụng tìm kiếm và trả về các tin tức mới nhất. 
-
-
-
-
-
 
 def play_song(update, context):
     # Lấy từ khóa tìm kiếm từ tin nhắn của người dùng
@@ -159,7 +154,6 @@ def main():
     dp.add_handler(CommandHandler("search_image", search_image))
     dp.add_handler(CommandHandler("qa", qa_gpt))
     dp.add_handler(CommandHandler("news", news))
-   
     dp.add_handler(CommandHandler("play_song", play_song))
    
     
@@ -170,7 +164,5 @@ def main():
     updater.idle()
     # Khởi động bot:
     
-    
-
 if __name__ == "__main__":
     main()
