@@ -20,14 +20,6 @@ from process import ask, append_interaction_to_chat_log
 # được sử dụng để lưu lại thông tin về các cuộc trò chuyện giữa người dùng và bot trong một tệp log.
 from News import GetNews
 # Hàm GetNews() được sử dụng để lấy các tin tức mới nhất từ các nguồn tin tức khác nhau dựa trên một từ khóa được cung cấp.
-from io import BytesIO
-# Lớp BytesIO cho phép tạo và xử lý các đối tượng bytes trong bộ nhớ, thay vì phải tạo các tệp tạm thời trong ổ đĩa.
-import numpy as np
-# thư viện cho phép xử lý các phép toán số học.
-import cv2
-# thư viện cho phép xử lý ảnh và video.
-import tensorflow as tf
-# thư viện cho phép xây dựng và huấn luyện các mô hình học máy.
 import en_core_web_sm
 # một gói ngôn ngữ của spacy dùng để phân tích các thành phần ngữ pháp.
 import telebot
@@ -49,7 +41,6 @@ nlp = en_core_web_sm.load()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 # cho phép chúng ta sử dụng các tính năng của thư viện SpaCy để phân tích ngôn ngữ tự nhiên.
 
-
 logger = logging.getLogger(__name__)
 # Logger sẽ được sử dụng để ghi lại các thông tin và cảnh báo trong quá trình chạy ứng dụng.
 openai_secret_key = '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'
@@ -59,12 +50,6 @@ session = {}
 # Biến này sẽ được sử dụng để lưu trữ lịch sử trò chuyện của người dùng với bot, giúp bot có thể tương tác và trả lời một cách thông minh hơn.
 sys.path.append('Method/News')
 # là câu lệnh để thêm đường dẫn tới thư mục chứa module liên quan tới việc lấy tin tức. 
-(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
-x_train, x_test = x_train / 255, x_test / 255
-# tải tập dữ liệu CIFAR-10 từ tf.keras.datasets.
-# Dòng đầu tiên tải bộ dữ liệu và chia thành 2 phần tương ứng là tập huấn luyện và tập kiểm tra
-# Dòng thứ hai chuẩn hóa các giá trị pixel của các ảnh trong tập huấn luyện và tập kiểm tra bằng cách chia cho 255
-
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Xin chào!\n"
@@ -114,7 +99,6 @@ def search_image(update, context):
     context.bot.send_photo(chat_id=update.effective_chat.id, photo=image_url)
     # Hàm này sử dụng đối tượng bot của bot Telegram để gửi hình ảnh tìm kiếm đến người dùng.
 # dùng để tìm kiếm hình ảnh trên Google Images dựa trên từ khóa mà người dùng nhập vào. 
-
 
 def news(update, context):
     try:
