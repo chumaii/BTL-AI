@@ -20,6 +20,13 @@ from process import ask, append_interaction_to_chat_log
 # được sử dụng để lưu lại thông tin về các cuộc trò chuyện giữa người dùng và bot trong một tệp log.
 from News import GetNews
 # Hàm GetNews() được sử dụng để lấy các tin tức mới nhất từ các nguồn tin tức khác nhau dựa trên một từ khóa được cung cấp.
+from io import BytesIO
+# Lớp BytesIO cho phép tạo và xử lý các đối tượng bytes trong bộ nhớ, thay vì phải tạo các tệp tạm thời trong ổ đĩa.
+import numpy as np
+# thư viện cho phép xử lý các phép toán số học.
+
+#import tensorflow as tf
+# thư viện cho phép xây dựng và huấn luyện các mô hình học máy.
 import en_core_web_sm
 # một gói ngôn ngữ của spacy dùng để phân tích các thành phần ngữ pháp.
 import telebot
@@ -29,8 +36,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy
 # thư viện cho phép tương tác với API Spotify
 
-bot = telebot.TeleBot("6251885022:AAHeWje78zf4gzRzdvB6F5lZPolo5eGFhY8")
-TOKEN = "6251885022:AAHeWje78zf4gzRzdvB6F5lZPolo5eGFhY8"
+bot = telebot.TeleBot("6183742841:AAEqrG82ZknZdFmmVS6PTUqiDk1sl1Vti6g")
+TOKEN = "6183742841:AAEqrG82ZknZdFmmVS6PTUqiDk1sl1Vti6g"
 # token telegram_bot ( mỗi bạn code chức năng khác nhau nên triển khai code khác nhau)
 
 client_credentials_manager = SpotifyClientCredentials(client_id='ba88803887d14a5a85d0a5c6532127e4', client_secret='b0d78b3a45604444a8dbb8075c5d49c5')
@@ -43,13 +50,17 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 # Logger sẽ được sử dụng để ghi lại các thông tin và cảnh báo trong quá trình chạy ứng dụng.
-openai_secret_key = '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'
+openai_secret_key = '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'
 openai.api_key = openai_secret_key
 # sử dụng mã truy cập này để gửi các yêu cầu đến API của OpenAI
 session = {}
 # Biến này sẽ được sử dụng để lưu trữ lịch sử trò chuyện của người dùng với bot, giúp bot có thể tương tác và trả lời một cách thông minh hơn.
 sys.path.append('Method/News')
 # là câu lệnh để thêm đường dẫn tới thư mục chứa module liên quan tới việc lấy tin tức. 
+
+# tải tập dữ liệu CIFAR-10 từ tf.keras.datasets.
+# Dòng đầu tiên tải bộ dữ liệu và chia thành 2 phần tương ứng là tập huấn luyện và tập kiểm tra
+# Dòng thứ hai chuẩn hóa các giá trị pixel của các ảnh trong tập huấn luyện và tập kiểm tra bằng cách chia cho 255
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Xin chào!\n"
@@ -111,7 +122,7 @@ def news(update, context):
                                  text="Mình tìm được một số tin tức sốt dẻo cho bạn đây!!!")
         for x in range(0, len(newses)):  
             message = json.loads(newses[x])
-            update.message.reply_text(message['link'])
+            update.message.reply_text(message['link'] + "\n" )
         # Deserialize dữ liệu json trả về từ file News.py lúc nãy
     except (IndexError, ValueError):
         update.message.reply_text('Xin lỗi Mình không thể tìm kiếm tin tức cho bạn!!')
@@ -149,14 +160,11 @@ def main():
     dp = updater.dispatcher
 
     # command
-    
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(CommandHandler("search_image", search_image))
     dp.add_handler(CommandHandler("qa", qa_gpt))
     dp.add_handler(CommandHandler("news", news))
     dp.add_handler(CommandHandler("play_song", play_song))
-   
-    
     # Đăng ký các trình xử lý bằng cách sử dụng các CommandHandler và MessageHandler.
     # Các CommandHandler được đăng ký để xử lý các lệnh được gửi đến bot. 
     # MessageHandler được đăng ký để xử lý các tin nhắn văn bản và hình ảnh được gửi đến bot.
