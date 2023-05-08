@@ -64,19 +64,7 @@ x_train, x_test = x_train / 255, x_test / 255
 # tải tập dữ liệu CIFAR-10 từ tf.keras.datasets.
 # Dòng đầu tiên tải bộ dữ liệu và chia thành 2 phần tương ứng là tập huấn luyện và tập kiểm tra
 # Dòng thứ hai chuẩn hóa các giá trị pixel của các ảnh trong tập huấn luyện và tập kiểm tra bằng cách chia cho 255
-class_names = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-# xác định danh sách tên lớp cho bộ dữ liệu CIFAR-10.
 
-model = tf.keras.models.Sequential()
-model.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
-model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(tf.keras.layers.Flatten())
-model.add(tf.keras.layers.Dense(64, activation='relu'))
-model.add(tf.keras.layers.Dense(10, activation='softmax'))
-# Đoạn code này xây dựng một mô hình mạng neuron tích chập (CNN) để phân loại ảnh trong bộ dữ liệu CIFAR-10.
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Xin chào!\n"
@@ -87,7 +75,6 @@ def start(update, context):
                                                                     "3. /news: Tìm kiếm tin tức\n"
                                                                     "4. /qa: Bạn có thể hỏi đáp với tôi\n"
                                                                     "5./play_song+ tên bài hát: đưa ra file mp3 dài 29s về bài hát đó\n" 
-                                                                    "6./train chức năng nhận diện ảnh khi bạn gửi vào 1 image\n"
                                                                     "Rất vui được phục vụ bạn :3")
 
 # khi gọi hàm start thì nội dung trên sẽ được hiển thị
@@ -147,37 +134,10 @@ def news(update, context):
 # Hàm news có tác dụng tìm kiếm và trả về các tin tức mới nhất. 
 
 
-def train(update, context):
-    update.message.reply_text("Model is being trained...")
-    # bot sẽ gửi tin nhắn "Model is being trained..." đến người dùng để thông báo rằng mô hình đang được huấn luyện.
-    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-    #  bot sử dụng phương thức compile() của mô hình để cấu hình quá trình huấn luyện
-    model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
-    # Mô hình sẽ được huấn luyện trong 10 epochs. 
-    model.save('cifar_classifier.model')
-    # Sau khi quá trình huấn luyện kết thúc, mô hình sẽ được lưu vào file cifar_classifier.model bằng phương thức save().
-    update.message.reply_text("Done! You can now send a photo!")
-# hàm này dùng để train bot
 
 
-def handle_photo(update, context):
-    file = context.bot.get_file(update.message.photo[-1].file_id)
-    f = BytesIO(file.download_as_bytearray())
-    file_bytes = np.asarray(bytearray(f.read()), dtype=np.uint8)
 
-    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    img = cv2.resize(img, (32, 32), interpolation=cv2.INTER_AREA)
 
-    
-    prediction = model.predict(np.array([img/255]))
-    update.message.reply_text(f"In the image I see a {class_names[np.argmax(prediction)]}")
-# Hàm handle_photo nhận vào một tấm ảnh được gửi bởi người dùng, 
-# sau đó sử dụng thư viện python-telegram-bot để tải về file ảnh đó.
-# hàm này sử dụng thư viện OpenCV để đọc và xử lý ảnh đó, 
-# đưa về kích thước chuẩn là 32x32 pixel và chuẩn hóa các giá trị pixel về khoảng từ 0 đến 1. 
-# Cuối cùng, hàm sử dụng mô hình đã được đào tạo trước đó để dự đoán đối tượng trong ảnh 
-# và trả về kết quả dưới dạng một tin nhắn cho người dùng.
 def play_song(update, context):
     # Lấy từ khóa tìm kiếm từ tin nhắn của người dùng
     search_query = update.message.text
@@ -215,9 +175,9 @@ def main():
     dp.add_handler(CommandHandler("search_image", search_image))
     dp.add_handler(CommandHandler("qa", qa_gpt))
     dp.add_handler(CommandHandler("news", news))
-    dp.add_handler(CommandHandler("train", train))
+   
     dp.add_handler(CommandHandler("play_song", play_song))
-    dp.add_handler(MessageHandler(Filters.photo, handle_photo))
+   
     
     # Đăng ký các trình xử lý bằng cách sử dụng các CommandHandler và MessageHandler.
     # Các CommandHandler được đăng ký để xử lý các lệnh được gửi đến bot. 
